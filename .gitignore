@@ -1,0 +1,37 @@
+# --- Environment secrets (never commit these) ---
+.env
+.env.local
+*.env
+!.env.example
+
+# --- Web app (root: TanStack Start / Vite) ---
+node_modules/
+dist/
+.output/
+.vite/
+*.local
+.DS_Store
+
+# --- Backend (Express) ---
+backend/node_modules/
+backend/dist/
+
+# --- Flutter app ---
+flutter_app/.dart_tool/
+flutter_app/.flutter-plugins
+flutter_app/.flutter-plugins-dependencies
+flutter_app/.packages
+flutter_app/build/
+flutter_app/.pub-cache/
+flutter_app/.pub/
+flutter_app/**/ios/Pods/
+flutter_app/**/ios/.symlinks/
+flutter_app/**/ios/Flutter/Flutter.framework
+flutter_app/**/android/.gradle/
+flutter_app/**/android/local.properties
+
+# --- Editor / OS ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+Thumbs.db
