@@ -1,0 +1,11 @@
+﻿services:
+  - type: web
+    name: palengke-frontend
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm install && npm run build
+    startCommand: node .output/server/index.mjs
+    envVars:
+      - key: VITE_API_URL
+        value: https://palengke-m-duque.onrender.com
