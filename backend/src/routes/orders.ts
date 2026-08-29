@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { pool, query } from "../db.js";
 
@@ -21,18 +22,18 @@ ordersRouter.post("/", async (req, res) => {
     return res.status(400).json({ error: "Cannot place an order with no items" });
   }
 
-  const client = await pool.connect();
+  const conn = await pool.getConnection();
   try {
-    await client.query("BEGIN");
+    await conn.beginTransaction();
 
     const productIds = body.items.map((item) => item.productId);
-    const { rows: products } = await client.query<{ id: string; price: string; stock: number }>(
-      "select id, price, stock from products where id = any($1::text[]) for update",
+    const [products] = await conn.query<any[]>(
+      "select id, price, stock from products where id in (?) for update",
       [productIds],
     );
 
-    const priceById = new Map(products.map((p) => [p.id, Number(p.price)]));
-    const stockById = new Map(products.map((p) => [p.id, p.stock]));
+    const priceById = new Map(products.map((p: any) => [p.id, Number(p.price)]));
+    const stockById = new Map(products.map((p: any) => [p.id, p.stock]));
 
     let total = 0;
     for (const item of body.items) {
@@ -47,12 +48,14 @@ ordersRouter.post("/", async (req, res) => {
       total += price * item.quantity;
     }
 
-    const { rows: orderRows } = await client.query<{ id: string }>(
+    // MySQL has no RETURNING clause, so generate the id ourselves before inserting.
+    const orderId = randomUUID();
+    await conn.query(
       `insert into orders
-         (customer_name, customer_phone, fulfillment, delivery_address, payment_method, notes, total)
-       values ($1, $2, $3, $4, $5, $6, $7)
-       returning id`,
+         (id, customer_name, customer_phone, fulfillment, delivery_address, payment_method, notes, total)
+       values (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
+        orderId,
         body.customerName,
         body.customerPhone,
         body.fulfillment,
@@ -62,28 +65,27 @@ ordersRouter.post("/", async (req, res) => {
         total,
       ],
     );
-    const orderId = orderRows[0]!.id;
 
     for (const item of body.items) {
       const price = priceById.get(item.productId)!;
-      await client.query(
-        `insert into order_items (order_id, product_id, quantity, unit_price) values ($1, $2, $3, $4)`,
-        [orderId, item.productId, item.quantity, price],
+      await conn.query(
+        `insert into order_items (id, order_id, product_id, quantity, unit_price) values (?, ?, ?, ?, ?)`,
+        [randomUUID(), orderId, item.productId, item.quantity, price],
       );
-      await client.query("update products set stock = stock - $1 where id = $2", [
+      await conn.query("update products set stock = stock - ? where id = ?", [
         item.quantity,
         item.productId,
       ]);
     }
 
-    await client.query("COMMIT");
+    await conn.commit();
     res.status(201).json({ orderId, total });
   } catch (error) {
-    await client.query("ROLLBACK");
+    await conn.rollback();
     const message = error instanceof Error ? error.message : "Failed to place order";
     res.status(400).json({ error: message });
   } finally {
-    client.release();
+    conn.release();
   }
 });
 
@@ -92,7 +94,7 @@ ordersRouter.get("/:id", async (req, res) => {
   const { rows } = await query(
     `select id, customer_name, customer_phone, fulfillment, delivery_address,
             payment_method, notes, status, total, created_at
-     from orders where id = $1`,
+     from orders where id = ?`,
     [req.params.id],
   );
   if (!rows[0]) return res.status(404).json({ error: "Order not found" });

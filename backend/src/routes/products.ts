@@ -48,11 +48,11 @@ productsRouter.get("/", async (req, res) => {
 
   if (typeof category === "string" && category !== "All") {
     params.push(category);
-    conditions.push(`p.category = $${params.length}`);
+    conditions.push(`p.category = ?`);
   }
   if (typeof search === "string" && search.trim()) {
-    params.push(`%${search}%`);
-    conditions.push(`p.name ilike $${params.length}`);
+    params.push(`%${search.toLowerCase()}%`);
+    conditions.push(`lower(p.name) like ?`);
   }
 
   const where = conditions.length ? `where ${conditions.join(" and ")}` : "";
@@ -62,7 +62,7 @@ productsRouter.get("/", async (req, res) => {
 
 // GET /api/products/:id
 productsRouter.get("/:id", async (req, res) => {
-  const { rows } = await query<ProductRow>(`${SELECT} where p.id = $1`, [req.params.id]);
+  const { rows } = await query<ProductRow>(`${SELECT} where p.id = ?`, [req.params.id]);
   if (!rows[0]) return res.status(404).json({ error: "Product not found" });
   res.json(toJson(rows[0]));
 });

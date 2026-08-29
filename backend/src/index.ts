@@ -1,3 +1,4 @@
+﻿import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { productsRouter } from "./routes/products.js";
@@ -22,3 +23,4 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
 
 const port = Number(process.env.PORT) || 4000;
 app.listen(port, () => console.log(`Palengke backend listening on :${port}`));
+

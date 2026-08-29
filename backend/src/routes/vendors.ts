@@ -8,7 +8,7 @@ type VendorRow = {
   name: string;
   stall: string;
   section: string;
-  categories: string[];
+  categories: string; // JSON column comes back as a string; parsed in toJson
   rating: string;
   image_url: string;
   description: string;
@@ -32,7 +32,7 @@ function toJson(row: VendorRow) {
     name: row.name,
     stall: row.stall,
     section: row.section,
-    categories: row.categories,
+    categories: typeof row.categories === "string" ? JSON.parse(row.categories) : row.categories,
     rating: Number(row.rating),
     products: Number(row.product_count),
     image: row.image_url,
@@ -48,7 +48,7 @@ vendorsRouter.get("/", async (_req, res) => {
 
 // GET /api/vendors/:id
 vendorsRouter.get("/:id", async (req, res) => {
-  const { rows } = await query<VendorRow>(select("where v.id = $1"), [req.params.id]);
+  const { rows } = await query<VendorRow>(select("where v.id = ?"), [req.params.id]);
   if (!rows[0]) return res.status(404).json({ error: "Vendor not found" });
   res.json(toJson(rows[0]));
 });
