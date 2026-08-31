@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../state/cart_provider.dart';
+import '../widgets/page_container.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -57,82 +58,87 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Checkout')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Full name'),
-              validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Contact number'),
-              validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-            ),
-            const SizedBox(height: 20),
-            const Text('How would you like your order?', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(
-                child: ChoiceChip(
-                  label: const Text('Delivery'),
-                  selected: _fulfillment == 'delivery',
-                  onSelected: (_) => setState(() => _fulfillment = 'delivery'),
+      body: SingleChildScrollView(
+        child: PageContainer(
+          maxWidth: 800,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Full name'),
+                  validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ChoiceChip(
-                  label: const Text('Market pickup'),
-                  selected: _fulfillment == 'pickup',
-                  onSelected: (_) => setState(() => _fulfillment = 'pickup'),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(labelText: 'Contact number'),
+                  validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
                 ),
-              ),
-            ]),
-            if (_fulfillment == 'delivery') ...[
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _addressController,
-                maxLines: 2,
-                decoration: const InputDecoration(labelText: 'Delivery address'),
-                validator: (v) => (_fulfillment == 'delivery' && (v == null || v.isEmpty)) ? 'Required' : null,
-              ),
-            ],
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _notesController,
-              maxLines: 2,
-              decoration: const InputDecoration(labelText: 'Special instructions'),
+                const SizedBox(height: 20),
+                const Text('How would you like your order?', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(children: [
+                  Expanded(
+                    child: ChoiceChip(
+                      label: const Text('Delivery'),
+                      selected: _fulfillment == 'delivery',
+                      onSelected: (_) => setState(() => _fulfillment = 'delivery'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ChoiceChip(
+                      label: const Text('Market pickup'),
+                      selected: _fulfillment == 'pickup',
+                      onSelected: (_) => setState(() => _fulfillment = 'pickup'),
+                    ),
+                  ),
+                ]),
+                if (_fulfillment == 'delivery') ...[
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _addressController,
+                    maxLines: 2,
+                    decoration: const InputDecoration(labelText: 'Delivery address'),
+                    validator: (v) => (_fulfillment == 'delivery' && (v == null || v.isEmpty)) ? 'Required' : null,
+                  ),
+                ],
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _notesController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(labelText: 'Special instructions'),
+                ),
+                const SizedBox(height: 20),
+                const Text('Payment method', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: const [
+                    ['cod', 'Cash on Delivery'],
+                    ['cash_pickup', 'Cash on Pickup'],
+                    ['gcash', 'GCash'],
+                    ['digital', 'Other digital payment'],
+                  ].map((entry) => _PaymentChip(value: entry[0], label: entry[1])).toList(),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _submitting ? null : _submit,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: _submitting
+                        ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Place Order'),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            const Text('Payment method', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: const [
-                ['cod', 'Cash on Delivery'],
-                ['cash_pickup', 'Cash on Pickup'],
-                ['gcash', 'GCash'],
-                ['digital', 'Other digital payment'],
-              ].map((entry) => _PaymentChip(value: entry[0], label: entry[1])).toList(),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _submitting ? null : _submit,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: _submitting
-                    ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Text('Place Order'),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

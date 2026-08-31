@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/vendor.dart';
 import '../services/api_service.dart';
+import '../widgets/page_container.dart';
+import '../widgets/responsive_nav.dart';
 import '../widgets/vendor_card.dart';
+import 'cart_screen.dart';
+import 'categories_screen.dart';
+import 'home_screen.dart' show HomeScreen;
 
 class VendorsScreen extends StatefulWidget {
   const VendorsScreen({super.key});
@@ -23,29 +28,52 @@ class _VendorsScreenState extends State<VendorsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Our Market Vendors')),
-      body: FutureBuilder<List<Vendor>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Could not load vendors.\n${snapshot.error}'));
-          }
-          final vendors = snapshot.data ?? [];
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: vendors.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.85,
-            ),
-            itemBuilder: (context, i) => VendorCard(vendor: vendors[i]),
-          );
-        },
+      appBar: ResponsiveNav(
+        title: 'Our Market Vendors',
+        currentRoute: 'vendors',
+        homeBuilder: () => const HomeScreen(),
+        categoriesBuilder: () => const CategoriesScreen(),
+        vendorsBuilder: () => const VendorsScreen(),
+        cartBuilder: () => const CartScreen(),
+      ),
+      body: SingleChildScrollView(
+        child: PageContainer(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = gridColumnsForWidth(constraints.maxWidth);
+              return FutureBuilder<List<Vendor>>(
+                future: _future,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 60),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 60),
+                      child: Center(child: Text('Could not load vendors.\n${snapshot.error}', textAlign: TextAlign.center)),
+                    );
+                  }
+                  final vendors = snapshot.data ?? [];
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: vendors.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 0.85,
+                    ),
+                    itemBuilder: (context, i) => VendorCard(vendor: vendors[i]),
+                  );
+                },
+              );
+            },
+          ),
+        ),
       ),
     );
   }

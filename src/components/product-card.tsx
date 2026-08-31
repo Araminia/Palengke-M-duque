@@ -1,8 +1,9 @@
-import { Check, ShoppingBasket } from "lucide-react";
+﻿import { Check, ShoppingBasket } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMarket } from "@/components/market-provider";
-import { money, type Product } from "@/lib/market-data";
+import { money } from "@/lib/market-data";
+import type { Product } from "@/lib/api";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useMarket();

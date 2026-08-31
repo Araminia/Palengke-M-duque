@@ -63,3 +63,5 @@ ThemeData buildAppTheme() {
     ),
   );
 }
+
+typedef ScreenBuilder = Widget Function();

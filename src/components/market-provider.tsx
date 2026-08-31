@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { Product } from "@/lib/market-data";
+﻿import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Product } from "@/lib/api";
 
 export type CartLine = { product: Product; quantity: number };
 type MarketContextValue = { cart: CartLine[]; add: (product: Product) => void; update: (id: string, quantity: number) => void; remove: (id: string) => void; clear: () => void; count: number; total: number };

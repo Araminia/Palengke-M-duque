@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Bike, MapPin, Search, ShieldCheck, ShoppingBasket } from "lucide-react";
 import { useState } from "react";
 import hero from "@/assets/palengke-hero.jpg";
@@ -6,20 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { VendorCard } from "@/components/vendor-card";
-import { categories, products, vendors } from "@/lib/market-data";
+import { categories } from "@/lib/market-data";
+import { fetchProducts, fetchVendors } from "@/lib/api";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Palengke.ph — Fresh from San Jose Market" }, { name: "description", content: "Shop fresh produce, meat, seafood and local goods from trusted public-market vendors." }, { property: "og:title", content: "Palengke.ph — Fresh from San Jose Market" }, { property: "og:description", content: "Your local public market, now online for easy pickup and delivery." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: () => fetchProducts() });
+  const { data: vendors = [] } = useQuery({ queryKey: ["vendors"], queryFn: fetchVendors });
   const visible = products.filter((product) => (category === "All" || product.category === category) && product.name.toLowerCase().includes(query.toLowerCase()));
   return (
     <>
@@ -41,7 +41,7 @@ function Index() {
       <section className="page-wrap pt-14">
         <div className="flex items-end justify-between"><div><p className="section-kicker">Fresh today</p><h2 className="section-title">Shop by Category</h2></div><Button asChild variant="ghost"><Link to="/categories">View all <ArrowRight /></Link></Button></div>
         <div className="mt-5 flex gap-2 overflow-x-auto pb-2">{categories.slice(0, 8).map((item) => <Button key={item} variant={category === item ? "default" : "outline"} className="shrink-0 rounded-full" onClick={() => setCategory(item)}>{item}</Button>)}</div>
-        <div className="mt-7 flex items-end justify-between"><div><p className="section-kicker">From local stalls</p><h2 className="section-title">{query ? `Results for “${query}”` : "Popular Products"}</h2></div></div>
+        <div className="mt-7 flex items-end justify-between"><div><p className="section-kicker">From local stalls</p><h2 className="section-title">{query ? `Results for "${query}"` : "Popular Products"}</h2></div></div>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{visible.slice(0, 10).map((product) => <ProductCard key={product.id} product={product} />)}</div>
         {visible.length === 0 && <div className="my-12 text-center text-muted-foreground">No products found. Try another search.</div>}
       </section>

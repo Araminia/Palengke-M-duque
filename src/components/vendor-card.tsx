@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
+﻿import { Link } from "@tanstack/react-router";
 import { MapPin, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Vendor } from "@/lib/market-data";
+import type { Vendor } from "@/lib/api";
 
 export function VendorCard({ vendor }: { vendor: Vendor }) {
   return <article className="vendor-card">

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/cart_provider.dart';
 import '../theme.dart';
+import '../widgets/page_container.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
@@ -29,46 +30,60 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Your Market Basket')),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: cart.lines.length,
-        separatorBuilder: (_, __) => const Divider(),
-        itemBuilder: (context, i) {
-          final line = cart.lines[i];
-          return Row(
+      body: SingleChildScrollView(
+        child: PageContainer(
+          maxWidth: 800,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(line.product.image, width: 64, height: 64, fit: BoxFit.cover),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(line.product.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    Text('₱${line.product.price.toStringAsFixed(2)} / ${line.product.unit}',
-                        style: const TextStyle(color: AppColors.mutedForeground, fontSize: 11)),
-                    Row(
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cart.lines.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, i) {
+                  final line = cart.lines[i];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove_circle_outline),
-                          onPressed: () => context.read<CartProvider>().updateQuantity(line.product.id, line.quantity - 1),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(line.product.image, width: 64, height: 64, fit: BoxFit.cover),
                         ),
-                        Text('${line.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        IconButton(
-                          icon: const Icon(Icons.add_circle_outline),
-                          onPressed: () => context.read<CartProvider>().updateQuantity(line.product.id, line.quantity + 1),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(line.product.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('₱${line.product.price.toStringAsFixed(2)} / ${line.product.unit}',
+                                  style: const TextStyle(color: AppColors.mutedForeground, fontSize: 11)),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove_circle_outline),
+                                    onPressed: () => context.read<CartProvider>().updateQuantity(line.product.id, line.quantity - 1),
+                                  ),
+                                  Text('${line.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  IconButton(
+                                    icon: const Icon(Icons.add_circle_outline),
+                                    onPressed: () => context.read<CartProvider>().updateQuantity(line.product.id, line.quantity + 1),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
+                        Text('₱${line.lineTotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-              Text('₱${line.lineTotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
-          );
-        },
+          ),
+        ),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
