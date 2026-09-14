@@ -24,10 +24,10 @@ function Index() {
   return (
     <>
       <section className="relative min-h-[520px] overflow-hidden bg-foreground sm:min-h-[570px]">
-        <img src={hero} alt="Fresh produce at Bagong Palengke ng San Jose" width={1536} height={1024} className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        <img src={hero} alt="Fresh produce at Bagong Palengke ng Marinduque" width={1536} height={1024} className="absolute inset-0 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/60 to-transparent" />
         <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 pb-24 pt-14 sm:min-h-[570px] sm:px-6">
-          <p className="mb-3 flex items-center gap-2 text-xs font-extrabold uppercase text-market-cream"><MapPin className="size-4" /> Bagong Palengke ng San Jose</p>
+          <p className="mb-3 flex items-center gap-2 text-xs font-extrabold uppercase text-market-cream"><MapPin className="size-4" /> Bagong Palengke ng Marinduque</p>
           <h1 className="max-w-3xl font-display text-4xl font-bold leading-tight text-primary-foreground sm:text-6xl">Sariwang pagkain,<br/><span className="text-market-gold">diretso sa palengke.</span></h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-primary-foreground/85 sm:text-base">Mamili mula sa mga suki mong tindero. Fresh, affordable, and ready for pickup or delivery.</p>
           <form className="mt-7 flex max-w-2xl gap-2 rounded-lg bg-background p-2 shadow-xl" onSubmit={(event) => event.preventDefault()}>
@@ -50,4 +50,5 @@ function Index() {
     </>
   );
 }
+
 
