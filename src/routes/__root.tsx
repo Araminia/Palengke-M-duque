@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -79,9 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Palengke.ph — Digital Public Market" },
+      { title: "Palengke.mq â€” Digital Public Market" },
       { name: "description", content: "Fresh local market products from trusted San Jose vendors, available for delivery or pickup." },
-      { name: "author", content: "Palengke.ph" },
+      { name: "author", content: "Palengke.mq" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -121,3 +121,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

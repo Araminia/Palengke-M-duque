@@ -7,8 +7,8 @@ import { fetchOrder, type Order } from "@/lib/api";
 export const Route = createFileRoute("/orders")({
   head: () => ({
     meta: [
-      { title: "Order Confirmation — Palengke.ph" },
-      { name: "description", content: "Your Palengke.ph order confirmation." },
+      { title: "Order Confirmation — Palengke.mq" },
+      { name: "description", content: "Your Palengke.mq order confirmation." },
     ],
   }),
   component: OrdersPage,
@@ -111,3 +111,4 @@ function OrdersPage() {
     </div>
   );
 }
+

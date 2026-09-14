@@ -11,7 +11,7 @@ import { categories } from "@/lib/market-data";
 import { fetchProducts, fetchVendors } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [{ title: "Palengke.ph — Fresh from San Jose Market" }, { name: "description", content: "Shop fresh produce, meat, seafood and local goods from trusted public-market vendors." }, { property: "og:title", content: "Palengke.ph — Fresh from San Jose Market" }, { property: "og:description", content: "Your local public market, now online for easy pickup and delivery." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
+  head: () => ({ meta: [{ title: "Palengke.mq — Fresh from San Jose Market" }, { name: "description", content: "Shop fresh produce, meat, seafood and local goods from trusted public-market vendors." }, { property: "og:title", content: "Palengke.mq — Fresh from San Jose Market" }, { property: "og:description", content: "Your local public market, now online for easy pickup and delivery." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: Index,
 });
 
@@ -50,5 +50,6 @@ function Index() {
     </>
   );
 }
+
 
 

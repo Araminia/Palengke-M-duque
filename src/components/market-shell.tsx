@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { Bell, ClipboardList, Home, LayoutDashboard, Package, Search, ShoppingBasket, Store, UserRound } from "lucide-react";
 import { useMarket } from "@/components/market-provider";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ export function MarketShell({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen bg-background text-foreground">
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-5 px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2"><span className="grid size-9 place-items-center rounded-full bg-primary text-primary-foreground"><ShoppingBasket className="size-5" /></span><span className="font-display text-xl font-bold">Palengke<span className="text-primary">.ph</span></span></Link>
+        <Link to="/" className="flex items-center gap-2"><span className="grid size-9 place-items-center rounded-full bg-primary text-primary-foreground"><ShoppingBasket className="size-5" /></span><span className="font-display text-xl font-bold">Palengke<span className="text-primary">.mq</span></span></Link>
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {vendorMode ? <><Nav to="/vendor-dashboard" label="Dashboard" /><Nav to="/vendor-dashboard/products" label="Products" /><Nav to="/vendor-dashboard/orders" label="Orders" /><Nav to="/vendor-dashboard/inventory" label="Inventory" /><Nav to="/vendor-dashboard/sales" label="Sales" /></> : <><Nav to="/" label="Home" /><Nav to="/categories" label="Categories" /><Nav to="/vendors" label="Vendors" /><Nav to="/orders" label="Orders" /></>}
         </nav>

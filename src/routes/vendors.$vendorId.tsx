@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MapPin, Star } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { fetchProducts, fetchVendors } from "@/lib/api";
-export const Route = createFileRoute("/vendors/$vendorId")({ head: () => ({ meta: [{ title: "Vendor Store — Palengke.ph" }, { name: "description", content: "Browse a local vendor's fresh market products." }, { property: "og:title", content: "Vendor Store — Palengke.ph" }, { property: "og:description", content: "Fresh products and stall information from Palengke.ph." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: StorePage });
+export const Route = createFileRoute("/vendors/$vendorId")({ head: () => ({ meta: [{ title: "Vendor Store — Palengke.mq" }, { name: "description", content: "Browse a local vendor's fresh market products." }, { property: "og:title", content: "Vendor Store — Palengke.mq" }, { property: "og:description", content: "Fresh products and stall information from Palengke.mq." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: StorePage });
 function StorePage() {
   const { vendorId } = Route.useParams();
   const { data: vendors = [] } = useQuery({ queryKey: ["vendors"], queryFn: fetchVendors });
@@ -13,3 +13,4 @@ function StorePage() {
   const stock = products.filter((p) => p.vendorId === vendor.id);
   return <><section className="relative h-64 overflow-hidden bg-foreground"><img src={vendor.image} alt={vendor.name} className="h-full w-full object-cover opacity-55"/><div className="absolute inset-0 flex items-end bg-gradient-to-t from-foreground/90 to-transparent"><div className="mx-auto w-full max-w-7xl px-4 pb-8 text-primary-foreground sm:px-6"><p className="flex items-center gap-1 text-xs"><MapPin className="size-4"/> Stall {vendor.stall} · {vendor.section}</p><h1 className="mt-2 font-display text-4xl font-bold">{vendor.name}</h1><p className="mt-2 flex items-center gap-2 text-sm"><Star className="size-4 fill-current text-market-gold"/> {vendor.rating} · Open today</p></div></div></section><div className="page-wrap"><p className="max-w-2xl text-sm text-muted-foreground">{vendor.description}</p><h2 className="section-title mt-8">Products from this stall</h2><div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{stock.map((p) => <ProductCard key={p.id} product={p}/>)}</div></div></>;
 }
+
