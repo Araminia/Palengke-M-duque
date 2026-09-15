@@ -1,10 +1,12 @@
 ﻿import { Link, useRouterState } from "@tanstack/react-router";
 import { Bell, ClipboardList, Home, LayoutDashboard, Package, Search, ShoppingBasket, Store, UserRound } from "lucide-react";
 import { useMarket } from "@/components/market-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 
 export function MarketShell({ children }: { children: React.ReactNode }) {
   const { count } = useMarket();
+  const { user } = useAuth();
   const path = useRouterState({ select: (state) => state.location.pathname });
   const vendorMode = path.startsWith("/vendor-dashboard");
   return <div className="min-h-screen bg-background text-foreground">
@@ -14,12 +16,20 @@ export function MarketShell({ children }: { children: React.ReactNode }) {
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {vendorMode ? <><Nav to="/vendor-dashboard" label="Dashboard" /><Nav to="/vendor-dashboard/products" label="Products" /><Nav to="/vendor-dashboard/orders" label="Orders" /><Nav to="/vendor-dashboard/inventory" label="Inventory" /><Nav to="/vendor-dashboard/sales" label="Sales" /></> : <><Nav to="/" label="Home" /><Nav to="/categories" label="Categories" /><Nav to="/vendors" label="Vendors" /><Nav to="/orders" label="Orders" /></>}
         </nav>
-        <div className="ml-auto flex items-center gap-1"><Button variant="ghost" size="icon" aria-label="Notifications"><Bell /></Button><Button asChild variant="secondary" className="relative rounded-full"><Link to="/cart"><ShoppingBasket /> Basket {count > 0 && <span className="cart-count">{count}</span>}</Link></Button><Button asChild className="hidden rounded-full sm:inline-flex"><Link to="/auth"><UserRound /> Sign in</Link></Button></div>
+        <div className="ml-auto flex items-center gap-1">
+          <Button variant="ghost" size="icon" aria-label="Notifications"><Bell /></Button>
+          <Button asChild variant="secondary" className="relative rounded-full"><Link to="/cart"><ShoppingBasket /> Basket {count > 0 && <span className="cart-count">{count}</span>}</Link></Button>
+          {user ? (
+            <Button asChild variant="secondary" className="hidden rounded-full sm:inline-flex"><Link to="/profile"><UserRound /> Profile</Link></Button>
+          ) : (
+            <Button asChild className="hidden rounded-full sm:inline-flex"><Link to="/auth"><UserRound /> Sign in</Link></Button>
+          )}
+        </div>
       </div>
     </header>
     <main>{children}</main>
     <nav className="mobile-nav">
-      {vendorMode ? <><MobileLink to="/vendor-dashboard" icon={LayoutDashboard} label="Dashboard" /><MobileLink to="/vendor-dashboard/products" icon={Package} label="Products" /><MobileLink to="/vendor-dashboard/orders" icon={ClipboardList} label="Orders" /><MobileLink to="/vendor-dashboard/profile" icon={UserRound} label="Profile" /></> : <><MobileLink to="/" icon={Home} label="Home" /><MobileLink to="/categories" icon={Search} label="Browse" /><MobileLink to="/vendors" icon={Store} label="Vendors" /><MobileLink to="/cart" icon={ShoppingBasket} label="Basket" badge={count} /><MobileLink to="/profile" icon={UserRound} label="Profile" /></>}
+      {vendorMode ? <><MobileLink to="/vendor-dashboard" icon={LayoutDashboard} label="Dashboard" /><MobileLink to="/vendor-dashboard/products" icon={Package} label="Products" /><MobileLink to="/vendor-dashboard/orders" icon={ClipboardList} label="Orders" /><MobileLink to="/vendor-dashboard/profile" icon={UserRound} label="Profile" /></> : <><MobileLink to="/" icon={Home} label="Home" /><MobileLink to="/categories" icon={Search} label="Browse" /><MobileLink to="/vendors" icon={Store} label="Vendors" /><MobileLink to="/cart" icon={ShoppingBasket} label="Basket" badge={count} /><MobileLink to={user ? "/profile" : "/auth"} icon={UserRound} label="Profile" /></>}
     </nav>
   </div>;
 }
